@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 const CardList = () => {
   const [cards, setCards] = useState([]);
@@ -7,9 +7,9 @@ const CardList = () => {
   const [newCardTitle, setNewCardTitle] = useState('');
   const [newCardContent, setNewCardContent] = useState('');
 
-  const addCard = async () => {
+  const addCard = useCallback(async () => {
     if (newCardTitle && newCardContent) {
-        const {status} = await axios.post('http://localhost:3000/card',{
+        const {status} = await axios.post('https://tufbackend-dulp.onrender.com/card',{
             title:newCardTitle,
             contents:newCardContent
         });
@@ -23,11 +23,11 @@ const CardList = () => {
             console.log("error in posting card");
         }
     }
-  };
+  },[newCardTitle, newCardContent]);
 
   const fetchData = async()=>{
     try {
-      const res = await axios.get("http://localhost:3000/cards");
+      const res = await axios.get("https://tufbackend-dulp.onrender.com/cards");
       setCards(res.data);
     } catch (error) {
       console.log(error.message);
@@ -35,10 +35,10 @@ const CardList = () => {
   }
   useEffect(()=>{
     fetchData();
-  },[])
+  },[addCard])
 
   const deleteCard = async (id) => {
-    const {status} = await axios.delete(`http://localhost:3000/card/${id}`);
+    const {status} = await axios.delete(`https://tufbackend-dulp.onrender.com/card/${id}`);
     if(status==200){
         const updatedCards = cards.filter(c=> c.id!==id);
         setCards(updatedCards);
@@ -53,10 +53,10 @@ const CardList = () => {
       <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1rem' }}>Card List</h1>
       
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1rem' }}>
-        {cards.map((card, index) => (
+        {cards.length===0 ?<p>empty</p> :cards?.map((card, index) => (
           <div key={index} style={{ border: '1px solid #ccc', borderRadius: '0.5rem', padding: '1rem' }}>
-            <h2 style={{ fontWeight: 'bold', marginBottom: '0.5rem' }}>{card.title}</h2>
-            <p style={{ marginBottom: '1rem' }}>{card.contents}</p>
+            <h2 style={{ fontWeight: 'bold', marginBottom: '0.5rem' }}>{card?.title}</h2>
+            <p style={{ marginBottom: '1rem' }}>{card?.contents}</p>
             <button 
               onClick={() => deleteCard(card.id)}
               style={{

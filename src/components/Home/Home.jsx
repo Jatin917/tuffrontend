@@ -10,7 +10,7 @@ const Home = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:3000/cards");
+      const res = await axios.get("https://tufbackend-dulp.onrender.com/cards");
       setCards(res.data);
     } catch (error) {
       console.error("Error fetching cards:", error.message);
@@ -51,6 +51,12 @@ const Home = () => {
             >
               Next
             </button>
+            <button
+  className="px-6 py-2 rounded-full bg-blue-600 text-white font-semibold shadow-lg hover:bg-blue-700 transition duration-300 ease-in-out transform hover:scale-105"
+  onClick={() => window.location.href = '/admin'}
+>
+  Go to Admin
+</button>
           </div>
 
           <div className="mt-4 text-blue-800">
