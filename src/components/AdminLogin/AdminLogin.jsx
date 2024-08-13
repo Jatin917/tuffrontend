@@ -1,10 +1,21 @@
 /* eslint-disable react/prop-types */
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const AdminLogin = ({ onLogin }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [showPopup, setShowPopup] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowPopup(false);
+    }, 5000); // Hide popup after 5 seconds
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -21,6 +32,7 @@ const AdminLogin = ({ onLogin }) => {
   };
 
   return (
+    <>
     <div style={{
       display: 'flex',
       justifyContent: 'center',
@@ -28,6 +40,23 @@ const AdminLogin = ({ onLogin }) => {
       height: '100vh',
       backgroundColor: '#f0f2f5'
     }}>
+      {showPopup && (
+        <div style={{
+          position: 'fixed',
+          top: '20px',
+          right: '20px',
+          backgroundColor: '#4CAF50',
+          color: 'white',
+          padding: '15px',
+          borderRadius: '5px',
+          boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+          zIndex: 1000,
+          animation: 'fadeIn 0.5s'
+        }}>
+          <p>Default Username: admin</p>
+          <p>Default Password: admin123</p>
+        </div>
+      )}
       <div style={{
         padding: '2rem',
         backgroundColor: 'white',
@@ -81,6 +110,8 @@ const AdminLogin = ({ onLogin }) => {
         {error && <p style={{ color: 'red', textAlign: 'center', marginTop: '1rem' }}>{error}</p>}
       </div>
     </div>
+    <ToastContainer />
+    </>
   );
 };
 

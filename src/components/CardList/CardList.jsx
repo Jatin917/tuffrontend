@@ -1,5 +1,7 @@
 import axios from 'axios';
 import React, { useCallback, useEffect, useState } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const CardList = () => {
   const [cards, setCards] = useState([]);
@@ -7,41 +9,46 @@ const CardList = () => {
   const [newCardTitle, setNewCardTitle] = useState('');
   const [newCardContent, setNewCardContent] = useState('');
 
-  const addCard = useCallback(async () => {
+  const addCard = async () => {
+    toast.info("Adding Card!")
     if (newCardTitle && newCardContent) {
         const {status} = await axios.post('https://tufbackend-dulp.onrender.com/card',{
             title:newCardTitle,
             contents:newCardContent
         });
         if(status==200){
-            fetchData();
+            await fetchData();
             setNewCardTitle('');
             setNewCardContent('');
             setShowForm(false);
+            toast.success('Card Added!');
         }
         else{
             console.log("error in posting card");
         }
     }
-  },[newCardTitle, newCardContent]);
+  };
 
   const fetchData = async()=>{
     try {
       const res = await axios.get("https://tufbackend-dulp.onrender.com/cards");
       setCards(res.data);
+      console.log("fetch");
     } catch (error) {
       console.log(error.message);
     }
   }
   useEffect(()=>{
     fetchData();
-  },[addCard])
+  },[])
 
   const deleteCard = async (id) => {
+    toast.info("Deleting Card!")
     const {status} = await axios.delete(`https://tufbackend-dulp.onrender.com/card/${id}`);
     if(status==200){
         const updatedCards = cards.filter(c=> c.id!==id);
         setCards(updatedCards);
+        toast.success('Card Deleted!');
     }
     else{
         console.log("error in deleting card");
@@ -49,6 +56,7 @@ const CardList = () => {
   };
 
   return (
+    <>
     <div style={{ padding: '1rem' }}>
       <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1rem' }}>Card List</h1>
       
@@ -135,6 +143,8 @@ const CardList = () => {
         </button>
       )}
     </div>
+    <ToastContainer />
+    </>
   );
 };
 
